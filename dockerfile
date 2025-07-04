@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y nginx unzip wget
 RUN rm -rf /var/www/html/*
 
 # Copy site files into the container
-COPY templatemo_588_ebook_landing /var/www/html
+COPY . /var/www/html
 
 # Expose port 80
 EXPOSE 80
