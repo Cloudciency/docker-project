@@ -25,16 +25,10 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     needs:
-    - dockerbuildpush
-    
+      - dockerbuildpush
     steps:
-      - name: connect to remote server
+      - name: Deploy to Azure server
         run: |
-          cat ${{ secrets.PRIVATE_SSH_KEY }} > key.pem
-          cat key.pem
-          ls -la
-          name: Deploy to Azure server
-          run: |
-            echo "${{ secrets.PRIVATE_SSH_KEY }}" > key.pem
-            chmod 600 key.pem
-            ssh -o StrictHostKeyChecking=no -i key.pem azureuser@52.186.174.4 'docker pull yourdockerhub/webapp:latest && docker run -d --rm --name webapp -p 80:80 yourdockerhub/webapp:latest
+          echo "${{ secrets.PRIVATE_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+          ssh -o StrictHostKeyChecking=no -i key.pem azureuser@52.186.174.4 'docker pull ${{ vars.DOCKERHUB_USERNAME }}/webapp:latest && docker stop webapp || true && docker rm webapp || true && docker run -d --name webapp -p 80:80 ${{ vars.DOCKERHUB_USERNAME }}/webapp:latest'
