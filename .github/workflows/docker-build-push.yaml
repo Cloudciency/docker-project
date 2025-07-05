@@ -31,4 +31,9 @@ jobs:
         run: |
           echo "${{ secrets.PRIVATE_SSH_KEY }}" > key.pem
           chmod 600 key.pem
-          ssh -o StrictHostKeyChecking=no -i key.pem azureuser@52.186.174.4 'docker pull ${{ vars.DOCKERHUB_USERNAME }}/webapp:latest && docker stop webapp || true && docker rm webapp || true && docker run -d --name webapp -p 80:80 ${{ vars.DOCKERHUB_USERNAME }}/webapp:latest'
+          ssh -o StrictHostKeyChecking=no -i key.pem azureuser@52.186.174.4 << EOF
+            docker pull ${{ vars.DOCKERHUB_USERNAME }}/webapp:latest
+            docker stop webapp || true
+            docker rm webapp || true
+            docker run -d --name webapp -p 80:80 ${{ vars.DOCKERHUB_USERNAME }}/webapp:latest
+          EOF
